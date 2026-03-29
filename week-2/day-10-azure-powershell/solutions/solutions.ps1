@@ -35,9 +35,10 @@ function New-SimResourceGroup {
 $requiredTags = @("Env", "Owner", "CostCenter")
 Write-Host "Non-compliant resource groups:" -ForegroundColor Yellow
 $script:resourceGroups | ForEach-Object {
-    $missing = $requiredTags | Where-Object { -not $_.Tags.ContainsKey($_) }
+    $rg = $_
+    $missing = $requiredTags | Where-Object { -not $rg.Tags.ContainsKey($_) }
     if ($missing) {
-        Write-Output "  $($_.Name): missing $($missing -join ', ')"
+        Write-Output "  $($rg.Name): missing $($missing -join ', ')"
     }
 }
 

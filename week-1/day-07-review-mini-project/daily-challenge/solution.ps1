@@ -194,10 +194,17 @@ function Show-Dashboard {
 
     # Overall status
     $issues = @()
-    $DiskHealth | Where-Object Status -ne "OK" | ForEach-Object { $issues += "Disk $($_.Drive) at $($_.UsagePercent)%" }
-    if ($Memory.Status -ne "OK") { $issues += "Memory at $($Memory.UsagePercent)%" }
+    $hasCritical = $false
+    $DiskHealth | Where-Object Status -ne "OK" | ForEach-Object {
+        $issues += "Disk $($_.Drive) at $($_.UsagePercent)% [$($_.Status)]"
+        if ($_.Status -eq "Critical") { $hasCritical = $true }
+    }
+    if ($Memory.Status -ne "OK") {
+        $issues += "Memory at $($Memory.UsagePercent)% [$($Memory.Status)]"
+        if ($Memory.Status -eq "Critical") { $hasCritical = $true }
+    }
 
-    $overall = if ($issues | Where-Object { $_ -match "Critical" }) { "CRITICAL" }
+    $overall = if ($hasCritical) { "CRITICAL" }
                elseif ($issues.Count -gt 0) { "WARNING" }
                else { "HEALTHY" }
 

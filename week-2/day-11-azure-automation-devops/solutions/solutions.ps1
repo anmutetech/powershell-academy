@@ -25,7 +25,12 @@ function Invoke-VMScheduleRunbook {
             continue
         }
 
-        $shouldRun = ($currentHour -ge $vm.StartHour -and $currentHour -lt $vm.ShutdownHour)
+        # Handle overnight schedules (e.g., StartHour=22, ShutdownHour=6)
+        if ($vm.StartHour -le $vm.ShutdownHour) {
+            $shouldRun = ($currentHour -ge $vm.StartHour -and $currentHour -lt $vm.ShutdownHour)
+        } else {
+            $shouldRun = ($currentHour -ge $vm.StartHour -or $currentHour -lt $vm.ShutdownHour)
+        }
 
         if ($shouldRun -and $vm.State -eq "Deallocated") {
             Write-Output "  $($vm.Name): Starting (scheduled on at $($vm.StartHour):00)"
@@ -168,7 +173,7 @@ function Invoke-ApiWithRetry {
 
     for ($i = 1; $i -le $MaxRetries; $i++) {
         try {
-            Write-Verbose "API call attempt $i: $Method $Uri"
+            Write-Verbose "API call attempt ${i}: $Method $Uri"
             $result = Invoke-RestMethod -Uri $Uri -Method $Method -ErrorAction Stop
             Write-Verbose "Success on attempt $i"
             return $result

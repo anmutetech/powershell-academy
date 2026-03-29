@@ -32,7 +32,6 @@ foreach ($emp in $filtered) {
         default         { "Junior"; $script:juniorCount++; break }
     }
 
-    $formattedSalary = "${salary:N0}"
     Write-Host ("  {0}. {1,-12} - {2,-10} - `${3,6:N0}  [{4}]" -f $index, $emp.Name, $emp.Department, $salary, $level)
     $index++
 }

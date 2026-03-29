@@ -21,10 +21,10 @@ Write-Host "`n=== Exercise 2: Grade Calculator ===" -ForegroundColor Cyan
 $score = 85
 
 $grade = switch ($score) {
-    {$_ -ge 90} { "A" }
-    {$_ -ge 80} { "B" }
-    {$_ -ge 70} { "C" }
-    {$_ -ge 60} { "D" }
+    {$_ -ge 90} { "A"; break }
+    {$_ -ge 80} { "B"; break }
+    {$_ -ge 70} { "C"; break }
+    {$_ -ge 60} { "D"; break }
     default      { "F" }
 }
 Write-Output "Score: $score -> Grade: $grade"
